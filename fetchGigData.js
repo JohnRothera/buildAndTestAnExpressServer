@@ -50,8 +50,61 @@ const fetchVenueInfoForSingleGig = async (gigID) => {
   }
 };
 
+const fetchPostGig = async (gigData) => {
+  try {
+    if (!gigData.name) {
+      throw new Error("You must at least provide a band name");
+    }
+    if (!gigData.location?.venue) {
+      throw new Error("Please provide the venue for the gig!");
+    }
+    const gigToPost = {
+      name: gigData.name,
+      image: gigData.image || "",
+      description: gigData.description || "",
+      date: gigData.date ? new Date(gigData.date) : new Date(),
+      location: {
+        venue: gigData.location?.venue,
+        city: gigData.location?.city || "",
+        state: gigData.location?.state || null,
+      },
+    };
+    const request = new Request("http://localhost:3000/gigs", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(gigToPost),
+    });
+    const response = await fetch(request);
+    if (!response.ok) {
+      throw new Error("Unable to create new gig!");
+    }
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+};
+
+const fetchDeleteGig = async (gigID) => {
+  try {
+    const request = new Request(`http://localhost:3000/gigs/${gigID}`, {
+      method: "DELETE",
+    });
+    const response = await fetch(request);
+    if (!response.ok) {
+      throw new Error("Unable to delete gig!");
+    }
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   fetchBandName,
   fetchAllBandNames,
   fetchVenueInfoForSingleGig,
+  fetchPostGig,
+  fetchDeleteGig,
 };
