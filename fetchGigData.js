@@ -101,10 +101,40 @@ const fetchDeleteGig = async (gigID) => {
   }
 };
 
+const fetchPatchGig = async (gigID) => {
+  try {
+    const response = await fetch(`http://localhost:3000/gigs/${gigID}`);
+    if (!response.ok) {
+      throw new Error("Unable to find gig with that id!");
+    }
+    const gigData = await response.json();
+    const gigToUpdate = {
+      description: gigData.description || "",
+      date: gigData.date ? new Date(gigData.date) : new Date(),
+      location: {
+        venue: gigData.location?.venue,
+        city: gigData.location?.city || "",
+      },
+    };
+    const request = new Request(`http://localhost:3000/gigs/${gigID}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(gigToUpdate),
+    });
+    const patchResponse = await fetch(request);
+    return await patchResponse.json();
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   fetchBandName,
   fetchAllBandNames,
   fetchVenueInfoForSingleGig,
   fetchPostGig,
   fetchDeleteGig,
+  fetchPatchGig,
 };

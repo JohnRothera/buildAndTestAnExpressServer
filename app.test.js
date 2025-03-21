@@ -156,3 +156,23 @@ describe("DELETE a gig from /gigs", () => {
     });
   });
 });
+
+describe("PATCH a gig from /gigs", () => {
+  test("we can update a gig, get a 200 status code and success message", async () => {
+    const response = await request(app)
+      .patch("/gigs/2")
+      .send({
+        description: "We've had to upgrade the venue for this show!",
+        date: "2025-08-16",
+        location: {
+          venue: "Wembley Arena",
+          city: "London",
+          state: null,
+        },
+      });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      message: "Gig successfully updated",
+    });
+  });
+});

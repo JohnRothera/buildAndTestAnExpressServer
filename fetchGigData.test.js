@@ -4,6 +4,7 @@ const {
   fetchVenueInfoForSingleGig,
   fetchPostGig,
   fetchDeleteGig,
+  fetchPatchGig,
 } = require("./fetchGigData");
 
 describe("fetchGigData", () => {
@@ -96,6 +97,14 @@ describe("fetch POST request/response", () => {
     await expect(fetchPostGig(testGigData3)).rejects.toThrow(
       "Please provide the venue for the gig!"
     );
+  });
+});
+
+describe("fetch PATCH request/response", () => {
+  test("see if we can update a gig with PATCH", async () => {
+    await expect(fetchPatchGig(1)).resolves.toEqual({
+      message: "Gig successfully updated",
+    });
   });
 });
 

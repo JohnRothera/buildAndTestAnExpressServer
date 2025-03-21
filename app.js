@@ -112,4 +112,34 @@ app.delete("/gigs/:id", (req, res) => {
   return res.status(200).json({ message: "Gig successfully deleted!" });
 });
 
+app.patch("/gigs/:id", (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  const gigToUpdate = req.body;
+
+  const gigIndex = gigs.findIndex((gig) => gig.id === Number(id));
+  if (gigIndex === -1) {
+    return res.status(404).json({ message: "Gig not found" });
+  }
+
+  // Create a proper updated gig object
+  const updatedGig = {
+    ...gigs[gigIndex], // Start with existing gig
+    // Update only the specific fields sent in the request
+    description: gigToUpdate.description || gigs[gigIndex].description,
+    date: gigToUpdate.date ? new Date(gigToUpdate.date) : gigs[gigIndex].date,
+    location: {
+      // Preserve existing location fields and override with any new values
+      ...gigs[gigIndex].location,
+      ...(gigToUpdate.location || {}),
+    },
+  };
+
+  // Update the gig in the array
+  gigs[gigIndex] = updatedGig;
+
+  res.status(200).json({ message: "Gig successfully updated" });
+});
+
 module.exports = app;
